@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import type { Request, Response } from 'express';
-import { SignupSchema ,ZapSchema} from '../types';
-import  prisma  from '../db';
+import { SignupSchema ,SigninSchema,ZapSchema} from '../types';
+import  {prisma}  from '../db';
 import { authMiddleware } from '../middleware';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 const router = Router();
@@ -37,11 +39,11 @@ router.post("/signup", async (req: Request, res: Response) => {
         }
     });
 
-    return res.status(201).json(user);
+    return res.status(201).json({user});
 });
 // @ts-ignore
 router.post("/signin",async(req:Request,res:Response)=>{
-    const parsedData = SignupSchema.safeParse(req.body);
+    const parsedData = SigninSchema.safeParse(req.body);
     if (!parsedData.success) {
         return res.status(400).json({
             message: "Signin Failed",

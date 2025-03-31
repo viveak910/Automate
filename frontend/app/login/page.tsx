@@ -8,7 +8,7 @@ import { useState } from "react";
 import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
 
-export default function() {
+export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
@@ -39,12 +39,22 @@ export default function() {
                     }} label={"Password"} type="password" placeholder="Password"></Input>
                     <div className="pt-4">
                         <PrimaryButton onClick={async () => {
-                            const res = await axios.post(`${BACKEND_URL}/api/v1/user/signin`, {
-                                username: email,
-                                password,
-                            });
-                            localStorage.setItem("token", res.data.token);
-                            router.push("/dashboard");
+                            try {
+                                const res = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+                                    email,
+                                    password,
+                                });
+                            
+                                if (res.data?.token) {
+                                    localStorage.setItem("token", res.data.token);
+                                    console.log("Login successful. Redirecting...");
+                                    router.push("/dashboard");
+                                } else {
+                                    console.error("No token received. Check API response.");
+                                }
+                            } catch (error:any) {
+                                console.error("Login failed:", error.response?.data || error.message);
+                            }
                         }} size="big">Login</PrimaryButton>
                     </div>
                 </div>
