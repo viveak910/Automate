@@ -16,5 +16,8 @@ app.use("/api/v1/zap", zapRouter);
 app.use("/api/v1/trigger", triggerRouter);
 
 app.use("/api/v1/action", actionRouter);
+app.get("/", (req, res) => {
+    res.send("Hello World!");
+});
 
 app.listen(3000);
