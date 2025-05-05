@@ -26,13 +26,15 @@ function main() {
                 where: {},
                 take: 10
             });
+            console.log("Pending rows", pendingRows);
             for (const row of pendingRows) {
                 producer.send({
                     topic: TOPIC_NAME,
                     messages: pendingRows.map((r) => ({
-                        value: r.zapRunId
+                        value: JSON.stringify({ zapRunId: r.zapRunId, stage: 0 }),
                     }))
                 });
+                console.log("Sending message", row.zapRunId);
             }
             yield client.zapRunOutbox.deleteMany({
                 where: {
@@ -41,6 +43,7 @@ function main() {
                     }
                 }
             });
+            yield new Promise((resolve) => setTimeout(resolve, 1000));
         }
     });
 }

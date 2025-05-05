@@ -8,34 +8,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
 const client_1 = require("@prisma/client");
 const client = new client_1.PrismaClient();
-const app = (0, express_1.default)();
-app.use(express_1.default.json());
-app.post("/hooks/catch/:userId/:zapId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = req.params.userId;
-    const zapId = req.params.zapId;
-    const body = req.body;
-    yield client.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
-        const run = yield client.zapRun.create({
+function main() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield client.availableAction.create({
             data: {
-                zapId: zapId,
-                metadata: body,
-            },
+                id: "webhook",
+                name: "Webhook",
+                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjWUr0rIHZc1vGIRVuGE-lNIDgNInEgStJpQ&s",
+            }
         });
-        yield client.zapRunOutbox.create({
+        yield client.availableTrigger.create({
             data: {
-                zapRunId: run.id,
-            },
+                id: "send-sol",
+                name: "send solona",
+                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwCSO-UENmvWwWN33bvtut1TNz3M_OUj9--w&s",
+            }
         });
-    }));
-    res.json({ status: "ok" });
-}));
-app.listen(3009, () => {
-    console.log("Server is running on port 3009");
-});
+        yield client.availableTrigger.create({
+            data: {
+                id: "email",
+                name: "send email",
+                image: "https://www.istockphoto.com/illustrations/email-logo",
+            }
+        });
+    });
+}
+main();
