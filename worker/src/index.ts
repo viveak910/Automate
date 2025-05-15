@@ -64,19 +64,30 @@ async function main() {
 
           const zapRunMetadata = zapRunDetails?.metadata;
 
+          console.dir(currentAction, { depth: null });
+
           if (currentAction.type.id === "email") {
-            const body = parse((currentAction.metadata as JsonObject)?.body as string, zapRunMetadata);
-            const to = parse((currentAction.metadata as JsonObject)?.email as string, zapRunMetadata);
-            console.log(`Sending out email to ${to} body is ${body}`)
-            await sendEmail(to, body);
+            const metadata = currentAction.metadata as JsonObject;
+
+            if (!metadata || typeof metadata.body !== "string" || typeof metadata.email !== "string") {
+              console.error("Invalid metadata for email action", metadata);
+              return;
+            }
+
+            //const body = parse(metadata.body, zapRunMetadata);
+            //const to = parse(metadata.email, zapRunMetadata);
+            console.log(`Sending out email `);
           }
+
 
           if (currentAction.type.id === "send-sol") {
 
-            const amount = parse((currentAction.metadata as JsonObject)?.amount as string, zapRunMetadata);
-            const address = parse((currentAction.metadata as JsonObject)?.address as string, zapRunMetadata);
-            console.log(`Sending out SOL of ${amount} to address ${address}`);
-            await sendSol(address, amount);
+            //const amount = parse((currentAction.metadata as JsonObject)?.amount as string, zapRunMetadata);
+            //const address = parse((currentAction.metadata as JsonObject)?.address as string, zapRunMetadata);
+            console.log(`Sending out SOL`);
+            // comment this out becuase we dont have solana wallet
+            //  await sendSol(address, amount);
+            
           }
           
           // 

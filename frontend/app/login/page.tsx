@@ -19,7 +19,7 @@ export default function Login() {
             <div className="flex pt-8 max-w-4xl">
                 <div className="flex-1 pt-20 px-4">
                     <div className="font-semibold text-3xl pb-4">
-                    Join millions worldwide who automate their work using Zapier.
+                    Join millions worldwide who automate their work using Automate.
                     </div>
                     <div className="pb-6 pt-4">
                         <CheckFeature label={"Easy setup, no coding required"} />
@@ -27,7 +27,6 @@ export default function Login() {
                     <div className="pb-6">
                         <CheckFeature label={"Free forever for core features"} />
                     </div>
-                    <CheckFeature label={"14-day trial of premium features & apps"} />
 
                 </div>
                 <div className="flex-1 pt-6 pb-6 mt-12 px-4 border rounded">

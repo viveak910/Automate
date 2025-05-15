@@ -9,17 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require('dotenv').config();
+const client_1 = require("@prisma/client");
 const kafkajs_1 = require("kafkajs");
+const prismaClient = new client_1.PrismaClient();
+const TOPIC_NAME = "zap-events";
 const kafka = new kafkajs_1.Kafka({
-    clientId: 'outbox-processor',
+    clientId: 'outbox-processor-2',
     brokers: ['localhost:9092']
 });
-const TOPIC_NAME = 'zap-events';
-const client_1 = require("@prisma/client");
-const client = new client_1.PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const consumer = kafka.consumer({ groupId: 'main-worker' });
+        const consumer = kafka.consumer({ groupId: 'main-worker-2' });
         yield consumer.connect();
         const producer = kafka.producer();
         yield producer.connect();
@@ -27,16 +28,19 @@ function main() {
         yield consumer.run({
             autoCommit: false,
             eachMessage: (_a) => __awaiter(this, [_a], void 0, function* ({ topic, partition, message }) {
-                var _b, _c, _d;
+                var _b, _c, _d, _e;
                 console.log({
                     partition,
                     offset: message.offset,
-                    value: (_b = message.value) === null || _b === void 0 ? void 0 : _b.toString()
+                    value: (_b = message.value) === null || _b === void 0 ? void 0 : _b.toString(),
                 });
-                const parsedMessage = JSON.parse(((_c = message.value) === null || _c === void 0 ? void 0 : _c.toString()) || "{}");
-                const { zapRunId, stage } = parsedMessage;
-                console.log("Processing message", zapRunId, stage);
-                const zapRunDetails = yield client.zapRun.findFirst({
+                if (!((_c = message.value) === null || _c === void 0 ? void 0 : _c.toString())) {
+                    return;
+                }
+                const parsedValue = JSON.parse((_d = message.value) === null || _d === void 0 ? void 0 : _d.toString());
+                const zapRunId = parsedValue.zapRunId;
+                const stage = parsedValue.stage;
+                const zapRunDetails = yield prismaClient.zapRun.findFirst({
                     where: {
                         id: zapRunId
                     },
@@ -45,46 +49,62 @@ function main() {
                             include: {
                                 actions: {
                                     include: {
-                                        type: true,
+                                        type: true
                                     }
                                 }
                             }
-                        }
+                        },
                     }
                 });
                 const currentAction = zapRunDetails === null || zapRunDetails === void 0 ? void 0 : zapRunDetails.zap.actions.find(x => x.sortingOrder === stage);
                 if (!currentAction) {
-                    console.log("No current action found");
+                    console.log("Current action not found?");
                     return;
                 }
-                const actionType = currentAction.type;
-                if (actionType.id === "email") {
-                    console.log("Sending email");
+                const zapRunMetadata = zapRunDetails === null || zapRunDetails === void 0 ? void 0 : zapRunDetails.metadata;
+                console.dir(currentAction, { depth: null });
+                if (currentAction.type.id === "email") {
+                    const metadata = currentAction.metadata;
+                    if (!metadata || typeof metadata.body !== "string" || typeof metadata.email !== "string") {
+                        console.error("Invalid metadata for email action", metadata);
+                        return;
+                    }
+                    //const body = parse(metadata.body, zapRunMetadata);
+                    //const to = parse(metadata.email, zapRunMetadata);
+                    console.log(`Sending out email `);
                 }
-                else if (actionType.id === "send-sol") {
-                    console.log("Sending sol");
+                if (currentAction.type.id === "send-sol") {
+                    //const amount = parse((currentAction.metadata as JsonObject)?.amount as string, zapRunMetadata);
+                    //const address = parse((currentAction.metadata as JsonObject)?.address as string, zapRunMetadata);
+                    console.log(`Sending out SOL`);
+                    // comment this out becuase we dont have solana wallet
+                    //  await sendSol(address, amount);
                 }
-                yield new Promise((resolve) => setTimeout(resolve, 1000));
-                const zapId = (_d = message.value) === null || _d === void 0 ? void 0 : _d.toString();
-                const lastStage = ((zapRunDetails === null || zapRunDetails === void 0 ? void 0 : zapRunDetails.zap.actions.length) || 0) - 1;
-                if (stage !== lastStage) {
+                // 
+                yield new Promise(r => setTimeout(r, 500));
+                const lastStage = (((_e = zapRunDetails === null || zapRunDetails === void 0 ? void 0 : zapRunDetails.zap.actions) === null || _e === void 0 ? void 0 : _e.length) || 1) - 1; // 1
+                console.log(lastStage);
+                console.log(stage);
+                if (lastStage !== stage) {
+                    console.log("pushing back to the queue");
                     yield producer.send({
                         topic: TOPIC_NAME,
-                        messages: [
-                            {
+                        messages: [{
                                 value: JSON.stringify({
-                                    zapRunId,
-                                    stage: stage + 1
+                                    stage: stage + 1,
+                                    zapRunId
                                 })
-                            }
-                        ]
+                            }]
                     });
-                    console.log("Sending message", zapRunId);
                 }
-                yield consumer.commitOffsets([
-                    { topic, partition, offset: (parseInt(message.offset) + 1).toString() }
-                ]);
-            })
+                console.log("processing done");
+                // 
+                yield consumer.commitOffsets([{
+                        topic: TOPIC_NAME,
+                        partition: partition,
+                        offset: (parseInt(message.offset) + 1).toString()
+                    }]);
+            }),
         });
     });
 }
