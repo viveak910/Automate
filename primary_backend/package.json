@@ -1,16 +1,18 @@
 {
-  "name": "primary-backend",
+  "name": "primary_backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc -b && node dist/index.js"
-  },
+  "build": "tsc -b",
+  "dev": "tsc -b && node dist/index.js"
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
   "prisma": {
-    "seed": "ts-node src/prisma/seed.ts"
+    "seed": "node dist/prisma/seed.js"
   },
   "type": "commonjs",
   "dependencies": {

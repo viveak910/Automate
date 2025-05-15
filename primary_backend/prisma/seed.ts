@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 const client = new PrismaClient();
 async function main(){
+    console.log("🌱 Running seed...");
     await client.availableTrigger.create({
         data:{
             id : "webhook",
@@ -26,5 +27,6 @@ async function main(){
 
         }
     })
+    console.log("🌱 seed completed");
 }
 main();

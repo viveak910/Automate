@@ -3,9 +3,9 @@ const client = new PrismaClient();
 import {Kafka} from "kafkajs";
 const kafka = new Kafka({
     clientId: 'outbox-processor',
-    brokers : ['localhost:9092']
+    brokers : ['kafka:9092']
 });
-const TOPIC_NAME = 'zap-events';
+const TOPIC_NAME = 'zap_events';
 async function main() {
     const producer = kafka.producer();
     await producer.connect();

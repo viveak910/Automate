@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -b",
+    "start": "node dist/index.js",
     "dev": "tsc -b && node dist/index.js"
   },
   "keywords": [],
@@ -16,6 +17,7 @@
     "express": "^4.21.2"
   },
   "devDependencies": {
-    "prisma": "^6.3.1"
+    "prisma": "^6.3.1",
+    "typescript": "^5.8.3"
   }
 }
