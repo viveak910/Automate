@@ -14,6 +14,8 @@ COPY . .
 # Generate Prisma client
 RUN npx prisma generate
 
+
+
 # Expose no port (worker runs in background)
 # EXPOSE not needed
 

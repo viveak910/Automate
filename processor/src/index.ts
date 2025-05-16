@@ -5,7 +5,7 @@ const kafka = new Kafka({
     clientId: 'outbox-processor',
     brokers : ['kafka:9092']
 });
-const TOPIC_NAME = 'zap_events';
+const TOPIC_NAME = 'zap-events';
 async function main() {
     const producer = kafka.producer();
     await producer.connect();

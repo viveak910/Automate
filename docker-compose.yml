@@ -53,7 +53,7 @@ services:
     command: |
       "
       sleep 10 &&
-      kafka-topics --create --topic zap_events --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092
+      kafka-topics --create --topic zap-events --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092
       "
     restart: "no"
 
