@@ -12,10 +12,10 @@
 
 ## 📄 Documentation & 🎥 Demo
 
-| Resource        | Preview |
-|----------------|---------|
-| 📘 [Documentation](https://drive.google.com/file/d/1ZAVFnOfAmv5c9pCldiI6ltjqA-PEvqYi/view?usp=sharing) | ![Preview](https://img.shields.io/badge/view-documentation-blue) |
-| 🎬 [Demo Video](https://drive.google.com/file/d/1U90_-ISTIsZishOyIzWrmhIE4v5ghea_/view?usp=sharing) | ![Preview](https://img.shields.io/badge/watch-demo-red) |
+| Resource        |
+|----------------|
+| 📘 [Documentation](https://drive.google.com/file/d/1ZAVFnOfAmv5c9pCldiI6ltjqA-PEvqYi/view?usp=sharing) | 
+| 🎬 [Demo Video](https://drive.google.com/file/d/1U90_-ISTIsZishOyIzWrmhIE4v5ghea_/view?usp=sharing) |
 
 ---
 
